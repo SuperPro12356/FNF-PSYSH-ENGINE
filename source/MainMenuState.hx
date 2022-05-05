@@ -239,9 +239,8 @@ class MainMenuState extends MusicBeatState
 										MusicBeatState.switchState(new StoryMenuState());
 									case 'freeplay':
 										MusicBeatState.switchState(new FreeplayState());
-						
-								            
-                                                                        case 'mods':
+									#if MODS_ALLOWED
+									case 'mods':
 										MusicBeatState.switchState(new ModsMenuState());
 									#end
 									case 'awards':
