@@ -6,6 +6,7 @@ import Discord.DiscordClient;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
+import flixel.addons.display.FlxBackdrop;
 import flixel.FlxCamera;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.effects.FlxFlicker;
@@ -25,12 +26,14 @@ using StringTools;
 
 class MainMenuState extends MusicBeatState
 {
-	public static var psychEngineVersion:String = '0.5.2h'; //This is also used for Discord RPC
+	public static var psychEngineVersion:String = '0.5.2h'; //This is also used for DiscÑord RPC
 	public static var curSelected:Int = 0;
 
 	var menuItems:FlxTypedGroup<FlxSprite>;
 	private var camGame:FlxCamera;
 	private var camAchievement:FlxCamera;
+
+	var background2:FlxSprite;
 	
 	var optionShit:Array<String> = [
 		'story_mode',
@@ -39,13 +42,17 @@ class MainMenuState extends MusicBeatState
 		//#if ACHIEVEMENTS_ALLOWED 'awards', #end
 		'credits',
 		//#if !switch 'donate', #end
-		'options'
+		'options',
+		'youtube',
+		'plushie'
 	];
 
 	var magenta:FlxSprite;
 	var camFollow:FlxObject;
 	var camFollowPos:FlxObject;
 	var debugKeys:Array<FlxKey>;
+
+	var char:FlxSprite;
 
 	override function create()
 	{
@@ -79,6 +86,19 @@ class MainMenuState extends MusicBeatState
 		bg.antialiasing = ClientPrefs.globalAntialiasing;
 		add(bg);
 
+		var background:FlxSprite = new FlxSprite().loadGraphic(Paths.image('mainmenu/menuBG'));
+		background.scrollFactor.set();
+		background.screenCenter();
+		background.antialiasing = ClientPrefs.globalAntialiasing;
+		add(background);
+
+		var bgScroll:FlxBackdrop = new FlxBackdrop(Paths.image('mainmenu/mainBG'), 5, 5, true, true, -33, -32);
+		bgScroll.scrollFactor.set();
+		bgScroll.screenCenter();
+		bgScroll.velocity.set(50, 50);
+		bgScroll.antialiasing = ClientPrefs.globalAntialiasing;
+		add(bgScroll);
+
 		camFollow = new FlxObject(0, 0, 1, 1);
 		camFollowPos = new FlxObject(0, 0, 1, 1);
 		add(camFollow);
@@ -92,7 +112,15 @@ class MainMenuState extends MusicBeatState
 		magenta.visible = false;
 		magenta.antialiasing = ClientPrefs.globalAntialiasing;
 		magenta.color = 0xFFfd719b;
-		add(magenta);
+		//add(magenta);
+	
+		background2 = new FlxSprite().loadGraphic(Paths.image('mainmenu/menuBG'));
+		background2.scrollFactor.set();
+		background2.screenCenter();
+		background2.visible = false;
+		background2.antialiasing = ClientPrefs.globalAntialiasing;
+		background2.color = FlxColor.MAGENTA;
+		add(background2);
 		
 		// magenta.scrollFactor.set();
 
@@ -127,6 +155,10 @@ class MainMenuState extends MusicBeatState
 
 		FlxG.camera.follow(camFollowPos, null, 1);
 
+		var versionShit:FlxText = new FlxText(12, FlxG.height - 64, 0, "Psych Engine Tutorials By EIT",12);
+		versionShit.scrollFactor.set();
+		versionShit.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		add(versionShit);
 		var versionShit:FlxText = new FlxText(12, FlxG.height - 44, 0, "Psych Engine v" + psychEngineVersion, 12);
 		versionShit.scrollFactor.set();
 		versionShit.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
@@ -153,11 +185,76 @@ class MainMenuState extends MusicBeatState
 		}
 		#end
 
-                #if android
-                addVirtualPad(UP_DOWN, A_B_E);
-                #end
-
 		super.create();
+
+		switch (FlxG.random.int(1, 6))
+            {
+            case 1:
+			char = new FlxSprite(820, 170).loadGraphic(Paths.image('mainmenu/hellron'));//put your cords and image here
+			char.frames = Paths.getSparrowAtlas('mainmenu/hellron');//here put the name of the xml
+			char.animation.addByPrefix('idleR', 'idle normal', 24, true);//on 'idle normal' change it to your xml one
+			char.animation.play('idleR');//you can rename the anim however you want to
+			char.scrollFactor.set();
+			FlxG.sound.play(Paths.sound('appear'), 2);
+			char.flipX = true;//this is for flipping it to look left instead of right you can make it however you want
+			char.antialiasing = ClientPrefs.globalAntialiasing;
+			add(char);
+
+            case 2:
+			char = new FlxSprite(790, 200).loadGraphic(Paths.image('mainmenu/BOYFRIEND_Run'));
+			char.frames = Paths.getSparrowAtlas('mainmenu/BOYFRIEND_Run');
+			char.animation.addByPrefix('idleB', 'BF idle dance', 24, true);
+			char.animation.play('idleB');
+			char.scrollFactor.set();
+			char.antialiasing = ClientPrefs.globalAntialiasing;
+			add(char);
+              
+			case 3:
+			char = new FlxSprite(810, 120).loadGraphic(Paths.image('mainmenu/sans_assets'));
+			char.frames = Paths.getSparrowAtlas('mainmenu/sans_assets');
+			char.animation.addByPrefix('idleS', 'SANS Idle', 24, true);
+			char.animation.play('idleS');
+			char.scrollFactor.set();
+			char.flipX = true;
+			char.antialiasing = ClientPrefs.globalAntialiasing;
+			add(char);
+
+			case 4:
+			char = new FlxSprite(650, 130).loadGraphic(Paths.image('mainmenu/Glitched'));
+			char.frames = Paths.getSparrowAtlas('mainmenu/Glitched');
+			char.animation.addByPrefix('idleG', 'idle???', 24, true);
+			char.animation.play('idleG');
+			char.scrollFactor.set();
+			char.flipX = true;
+			char.antialiasing = ClientPrefs.globalAntialiasing;
+			FlxG.sound.play(Paths.sound('miaou'), 2);
+			add(char);
+		
+			case 5:
+			char = new FlxSprite(700, 130).loadGraphic(Paths.image('mainmenu/hellron-drippin'));
+			char.frames = Paths.getSparrowAtlas('mainmenu/hellron-drippin');
+			char.animation.addByPrefix('idleRD', 'idle instance', 24, true);
+			char.animation.play('idleRD');
+			char.scrollFactor.set();
+			char.flipX = true;
+			char.antialiasing = ClientPrefs.globalAntialiasing;
+			FlxG.sound.play(Paths.sound('SUS'), 2);
+			add(char);
+
+			case 6:
+			char = new FlxSprite(790, 190).loadGraphic(Paths.image('mainmenu/Sans_Gold'));
+			char.frames = Paths.getSparrowAtlas('mainmenu/Sans_Gold');
+			char.animation.addByPrefix('idleSG', 'Silver Idle', 24, true);
+			char.animation.play('idleSG');
+			char.scrollFactor.set();
+			FlxG.sound.play(Paths.sound('error'), 2);
+			char.antialiasing = ClientPrefs.globalAntialiasing;
+			background.color = FlxColor.BLACK;
+			bgScroll.color = FlxColor.BLACK;
+			background2.color = FlxColor.BLACK;
+			add(char);
+		}
+
 	}
 
 	#if ACHIEVEMENTS_ALLOWED
@@ -208,12 +305,17 @@ class MainMenuState extends MusicBeatState
 				{
 					CoolUtil.browserLoad('https://ninja-muffin24.itch.io/funkin');
 				}
+				else if (optionShit[curSelected] == 'youtube')
+					{
+						CoolUtil.browserLoad('https://youtube.com');
+					}
 				else
 				{
 					selectedSomethin = true;
 					FlxG.sound.play(Paths.sound('confirmMenu'));
 
-					if(ClientPrefs.flashing) FlxFlicker.flicker(magenta, 1.1, 0.15, false);
+					if(ClientPrefs.flashing) FlxFlicker.flicker(background2, 1.1, 0.15, false);
+					if(ClientPrefs.flashing) FlxFlicker.flicker(char, 1.1, 0.15, false);
 
 					menuItems.forEach(function(spr:FlxSprite)
 					{
@@ -249,17 +351,21 @@ class MainMenuState extends MusicBeatState
 										MusicBeatState.switchState(new CreditsState());
 									case 'options':
 										LoadingState.loadAndSwitchState(new options.OptionsState());
+									case 'plushie':
+										FlxG.switchState(new dumb.PlushieState());
 								}
 							});
 						}
 					});
 				}
 			}
-			else if (FlxG.keys.anyJustPressed(debugKeys) #if android || _virtualpad.buttonE.justPressed #end)
+			#if desktop
+			else if (FlxG.keys.anyJustPressed(debugKeys))
 			{
 				selectedSomethin = true;
 				MusicBeatState.switchState(new MasterEditorMenu());
 			}
+			#end
 		}
 
 		super.update(elapsed);

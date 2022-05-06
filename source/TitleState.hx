@@ -12,6 +12,7 @@ import flixel.addons.display.FlxGridOverlay;
 import flixel.addons.transition.FlxTransitionSprite.GraphicTransTileDiamond;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.addons.transition.TransitionData;
+import flixel.addons.display.FlxBackdrop;
 import haxe.Json;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
@@ -57,13 +58,21 @@ class TitleState extends MusicBeatState
 
 	public static var initialized:Bool = false;
 
+	var newLogo:FlxSprite;
+
 	var blackScreen:FlxSprite;
 	var credGroup:FlxGroup;
 	var credTextShit:Alphabet;
 	var textGroup:FlxGroup;
 	var ngSpr:FlxSprite;
 
+	var yt:FlxSprite;
+	var funky:FlxSprite;
+
 	var curWacky:Array<String> = [];
+
+	var bgScroll:FlxBackdrop;
+	var bg:FlxSprite;
 
 	var wackyImage:FlxSprite;
 
@@ -83,10 +92,6 @@ class TitleState extends MusicBeatState
 
 	override public function create():Void
 	{
-		#if android
-		FlxG.android.preventDefaultKeys = [BACK];
-		#end
-
 		Paths.clearStoredMemory();
 		Paths.clearUnusedMemory();
 
@@ -113,7 +118,7 @@ class TitleState extends MusicBeatState
 		#if CHECK_FOR_UPDATES
 		if(!closedState) {
 			trace('checking for update');
-			var http = new haxe.Http("https://raw.githubusercontent.com/jigsaw-4277821/FNF-PsychEngine-Android-Support/main/gitVersion.txt");
+			var http = new haxe.Http("https://raw.githubusercontent.com/ShadowMario/FNF-PsychEngine/main/gitVersion.txt");
 			
 			http.onData = function (data:String)
 			{
@@ -249,7 +254,7 @@ class TitleState extends MusicBeatState
 			// music.play();
 
 			if(FlxG.sound.music == null) {
-				FlxG.sound.playMusic(Paths.music('freakyMenu'), 0);
+				FlxG.sound.playMusic(Paths.music('lecoolasssong'), 0);
 
 				FlxG.sound.music.fadeIn(4, 0, 0.7);
 			}
@@ -278,11 +283,13 @@ class TitleState extends MusicBeatState
 		logoBl.animation.addByPrefix('bump', 'logo bumpin', 24, false);
 		logoBl.animation.play('bump');
 		logoBl.updateHitbox();
-		// logoBl.screenCenter();
+		logoBl.screenCenter();
+		logoBl.visible = false;
 		// logoBl.color = FlxColor.BLACK;
 
 		swagShader = new ColorSwap();
 		gfDance = new FlxSprite(titleJSON.gfx, titleJSON.gfy);
+		gfDance.visible = false;
 
 		var easterEgg:String = FlxG.save.data.psychDevsEasterEgg;
 		switch(easterEgg.toUpperCase())
@@ -315,22 +322,34 @@ class TitleState extends MusicBeatState
 				gfDance.animation.addByIndices('danceRight', 'gfDance', [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29], "", 24, false);
 		}
 		gfDance.antialiasing = ClientPrefs.globalAntialiasing;
+
+		bg = new FlxSprite().loadGraphic(Paths.image('titleMenu/leTitleBG'));
+		bg.setGraphicSize(Std.int(bg.width * 1.1)); //replace the leTitleBG with your image
+		bg.screenCenter(); //my image isnt big enough so i gotta make it bigger if yours is enough then dont make that
+		bg.antialiasing = ClientPrefs.globalAntialiasing;
+
+		newLogo = new FlxSprite().loadGraphic(Paths.image('titleMenu/logoNew'));
+		newLogo.screenCenter(); //chnage the logoNew to you'r image
+		newLogo.offset.y += 60; //my logo needs a lil offset  if your's is perfectly fine don't add this
+		newLogo.antialiasing = ClientPrefs.globalAntialiasing;
 		
+		add(bg);
+		add(newLogo);
 		add(gfDance);
 		gfDance.shader = swagShader.shader;
 		add(logoBl);
 		logoBl.shader = swagShader.shader;
 
 		titleText = new FlxSprite(titleJSON.startx, titleJSON.starty);
-		#if MODS_ALLOWED
-		var path = SUtil.getPath() + "mods/" + Paths.currentModDirectory + "/images/titleEnter.png";
+		#if (desktop && MODS_ALLOWED)
+		var path = "mods/" + Paths.currentModDirectory + "/images/titleEnter.png";
 		//trace(path, FileSystem.exists(path));
 		if (!FileSystem.exists(path)){
-			path = SUtil.getPath() + "mods/images/titleEnter.png";
+			path = "mods/images/titleEnter.png";
 		}
 		//trace(path, FileSystem.exists(path));
 		if (!FileSystem.exists(path)){
-			path = SUtil.getPath() + "assets/images/titleEnter.png";
+			path = "assets/images/titleEnter.png";
 		}
 		//trace(path, FileSystem.exists(path));
 		titleText.frames = FlxAtlasFrames.fromSparrow(BitmapData.fromFile(path),File.getContent(StringTools.replace(path,".png",".xml")));
@@ -361,6 +380,13 @@ class TitleState extends MusicBeatState
 		blackScreen = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
 		credGroup.add(blackScreen);
 
+		bgScroll = new FlxBackdrop(Paths.image('titleMenu/titleSCROLL'), 0, 0, true, false);
+		bgScroll.velocity.set(100, 0); //change the titleSCROLL to the image you want to use
+		bgScroll.screenCenter(); //also set the speed as fast or slow as you want, just don't modify the 0
+		bgScroll.setGraphicSize(Std.int(bgScroll.width * 1.1));
+		bgScroll.antialiasing = ClientPrefs.globalAntialiasing;
+		credGroup.add(bgScroll);  //the size is optional my image needs to be bigger if your's not then don't do so
+
 		credTextShit = new Alphabet(0, 0, "", true);
 		credTextShit.screenCenter();
 
@@ -375,6 +401,23 @@ class TitleState extends MusicBeatState
 		ngSpr.updateHitbox();
 		ngSpr.screenCenter(X);
 		ngSpr.antialiasing = ClientPrefs.globalAntialiasing;
+
+		yt = new FlxSprite().loadGraphic(Paths.image('titleMenu/ytLogo'));
+		yt.screenCenter(); //change the ytLogo to you'r image
+		yt.setGraphicSize(Std.int(yt.width * 0.25));
+		yt.visible = false;
+		yt.offset.y -= 115; 
+		yt.offset.x -= 20; //change the offsets according to YOU'R image
+		yt.antialiasing = ClientPrefs.globalAntialiasing;
+		add(yt); // if you have only 1 sprite replacing the newgrounds one then just copy one of these and modify it	
+
+		funky = new FlxSprite().loadGraphic(Paths.image('titleMenu/Funky'));
+		funky.visible = false;
+		funky.screenCenter();
+		funky.setGraphicSize(Std.int(funky.width * 0.7));
+		funky.offset.y -= 270;
+		funky.antialiasing = ClientPrefs.globalAntialiasing;
+		add(funky); //basically i have 2 sprites instead of newgrounds one
 
 		FlxTween.tween(credTextShit, {y: credTextShit.y + 20}, 2.9, {ease: FlxEase.quadInOut, type: PINGPONG});
 
@@ -562,6 +605,8 @@ class TitleState extends MusicBeatState
 	{
 		super.beatHit();
 
+		FlxTween.tween(FlxG.camera, {zoom:1.03}, 0.3, {ease: FlxEase.quadOut, type: BACKWARD});
+
 		if(logoBl != null) 
 			logoBl.animation.play('bump', true);
 
@@ -579,16 +624,14 @@ class TitleState extends MusicBeatState
 			{
 				case 1:
 					#if PSYCH_WATERMARKS
-					createCoolText(['Psych Engine by'], 15);
+					createCoolText(['Tutorial Made By'], 15);
 					#else
 					createCoolText(['ninjamuffin99', 'phantomArcade', 'kawaisprite', 'evilsk8er']);
 					#end
 				// credTextShit.visible = true;
 				case 3:
 					#if PSYCH_WATERMARKS
-					addMoreText('Shadow Mario', 15);
-					addMoreText('RiverOaken', 15);
-					addMoreText('shubs', 15);
+					addMoreText('EIT', 15);
 					#else
 					addMoreText('present');
 					#end
@@ -601,17 +644,19 @@ class TitleState extends MusicBeatState
 				// credTextShit.screenCenter();
 				case 5:
 					#if PSYCH_WATERMARKS
-					createCoolText(['Not associated', 'with'], -40);
+					createCoolText(['Remember', 'To'], -40);
 					#else
 					createCoolText(['In association', 'with'], -40);
 					#end
 				case 7:
-					addMoreText('newgrounds', -40);
-					ngSpr.visible = true;
+					addMoreText('Subscribe', -40);
+					yt.visible = true;
+					funky.visible = true;
 				// credTextShit.text += '\nNewgrounds';
 				case 8:
 					deleteCoolText();
-					ngSpr.visible = false;
+					yt.visible = false;
+					funky.visible = false;
 				// credTextShit.visible = false;
 
 				// credTextShit.text = 'Shoutouts Tom Fulp';
@@ -635,8 +680,10 @@ class TitleState extends MusicBeatState
 				// credTextShit.text += '\nNight';
 				case 15:
 					addMoreText('Funkin'); // credTextShit.text += '\nFunkin';
-
 				case 16:
+			     	addMoreText('Tutorials');
+
+				case 17:
 					skipIntro();
 			}
 		}
@@ -673,7 +720,7 @@ class TitleState extends MusicBeatState
 						skippedIntro = true;
 						playJingle = false;
 						
-						FlxG.sound.playMusic(Paths.music('freakyMenu'), 0);
+						FlxG.sound.playMusic(Paths.music('lecoolasssong'), 0);
 						FlxG.sound.music.fadeIn(4, 0, 0.7);
 						return;
 				}
@@ -695,7 +742,7 @@ class TitleState extends MusicBeatState
 					remove(credGroup);
 					FlxG.camera.flash(FlxColor.WHITE, 3);
 					sound.onComplete = function() {
-						FlxG.sound.playMusic(Paths.music('freakyMenu'), 0);
+						FlxG.sound.playMusic(Paths.music('lecoolasssong'), 0);
 						FlxG.sound.music.fadeIn(4, 0, 0.7);
 						transitioning = false;
 					};
