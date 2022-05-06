@@ -189,70 +189,27 @@ class MainMenuState extends MusicBeatState
 
 		switch (FlxG.random.int(1, 6))
             {
-            case 1:
-			char = new FlxSprite(820, 170).loadGraphic(Paths.image('mainmenu/hellron'));//put your cords and image here
-			char.frames = Paths.getSparrowAtlas('mainmenu/hellron');//here put the name of the xml
-			char.animation.addByPrefix('idleR', 'idle normal', 24, true);//on 'idle normal' change it to your xml one
-			char.animation.play('idleR');//you can rename the anim however you want to
+                        case 1:
+			char = new FlxSprite(820, 170).loadGraphic(Paths.image('mainmenu/BOYFRINED'));//put your cords and image here
+			char.frames = Paths.getSparrowAtlas('mainmenu/BOYFRIEND');//here put the name of the xml
+			char.animation.addByPrefix('BF idle dance', 'BF idle dance', 24, true);//on 'idle normal' change it to your xml one
+			char.animation.play('BF idle dance');//you can rename the anim however you want to
 			char.scrollFactor.set();
 			FlxG.sound.play(Paths.sound('appear'), 2);
 			char.flipX = true;//this is for flipping it to look left instead of right you can make it however you want
 			char.antialiasing = ClientPrefs.globalAntialiasing;
 			add(char);
 
-            case 2:
-			char = new FlxSprite(790, 200).loadGraphic(Paths.image('mainmenu/BOYFRIEND_Run'));
-			char.frames = Paths.getSparrowAtlas('mainmenu/BOYFRIEND_Run');
-			char.animation.addByPrefix('idleB', 'BF idle dance', 24, true);
-			char.animation.play('idleB');
+                        case 2:
+			char = new FlxSprite(790, 200).loadGraphic(Paths.image('mainmenu/bfMinusCold'));
+			char.frames = Paths.getSparrowAtlas('mainmenu/bfMinusCold');
+			char.animation.addByPrefix('bfMinusCold Idle', 'bfMinusCold Idle', 24, true);
+			char.animation.play('bfMinusCold Idle');
 			char.scrollFactor.set();
-			char.antialiasing = ClientPrefs.globalAntialiasing;
-			add(char);
-              
-			case 3:
-			char = new FlxSprite(810, 120).loadGraphic(Paths.image('mainmenu/sans_assets'));
-			char.frames = Paths.getSparrowAtlas('mainmenu/sans_assets');
-			char.animation.addByPrefix('idleS', 'SANS Idle', 24, true);
-			char.animation.play('idleS');
-			char.scrollFactor.set();
-			char.flipX = true;
 			char.antialiasing = ClientPrefs.globalAntialiasing;
 			add(char);
 
-			case 4:
-			char = new FlxSprite(650, 130).loadGraphic(Paths.image('mainmenu/Glitched'));
-			char.frames = Paths.getSparrowAtlas('mainmenu/Glitched');
-			char.animation.addByPrefix('idleG', 'idle???', 24, true);
-			char.animation.play('idleG');
-			char.scrollFactor.set();
-			char.flipX = true;
-			char.antialiasing = ClientPrefs.globalAntialiasing;
-			FlxG.sound.play(Paths.sound('miaou'), 2);
-			add(char);
-		
-			case 5:
-			char = new FlxSprite(700, 130).loadGraphic(Paths.image('mainmenu/hellron-drippin'));
-			char.frames = Paths.getSparrowAtlas('mainmenu/hellron-drippin');
-			char.animation.addByPrefix('idleRD', 'idle instance', 24, true);
-			char.animation.play('idleRD');
-			char.scrollFactor.set();
-			char.flipX = true;
-			char.antialiasing = ClientPrefs.globalAntialiasing;
-			FlxG.sound.play(Paths.sound('SUS'), 2);
-			add(char);
-
-			case 6:
-			char = new FlxSprite(790, 190).loadGraphic(Paths.image('mainmenu/Sans_Gold'));
-			char.frames = Paths.getSparrowAtlas('mainmenu/Sans_Gold');
-			char.animation.addByPrefix('idleSG', 'Silver Idle', 24, true);
-			char.animation.play('idleSG');
-			char.scrollFactor.set();
-			FlxG.sound.play(Paths.sound('error'), 2);
-			char.antialiasing = ClientPrefs.globalAntialiasing;
-			background.color = FlxColor.BLACK;
-			bgScroll.color = FlxColor.BLACK;
-			background2.color = FlxColor.BLACK;
-			add(char);
+			
 		}
 
 	}
